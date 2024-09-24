@@ -15,7 +15,6 @@ screen = pygame.display.set_mode((500, 500))
 #Set title
 pygame.display.set_caption("Sokoban")
 
-
 running = True
 
 while running:

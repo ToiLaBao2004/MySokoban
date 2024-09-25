@@ -22,16 +22,12 @@ class Game:
 
     def print_game(self, screen):
         # Vẽ trò chơi lên màn hình
-        screen.fill((255, 226, 191))  # Làm sạch màn hình với màu nền
         x = 0
         y = 0
         for row in self.matrix:
             for char in row:
                 # Vẽ các đối tượng tương ứng với ký tự trong ma trận
-                if char == ' ':  # floor
-                    floor = Floor(x, y)
-                    screen.blit(floor.image, floor.rect)
-                elif char == '#':  # wall
+                if char == '#':    # wall
                     wall = Wall(x, y)
                     screen.blit(wall.image, wall.rect)
                 elif char == '@':  # worker
@@ -53,3 +49,13 @@ class Game:
                 x += 64  # Di chuyển tọa độ x cho cột tiếp theo
             x = 0  # Reset tọa độ x về 0 cho hàng tiếp theo
             y += 64  # Di chuyển tọa độ y cho hàng tiếp theo
+
+    @staticmethod  # Định nghĩa phương thức như phương thức tĩnh
+    def fill_screen_with_floor(size, screen):
+        screen_width, screen_height = size
+
+        # Lặp qua các tọa độ trên màn hình để vẽ hình nền floor step = 64pixel
+        for x in range(0, screen_width, 64):
+            for y in range(0, screen_height, 64):
+                floor = Floor(x, y)
+                screen.blit(floor.image, floor.rect)  # Vẽ hình ảnh floor lên màn hình

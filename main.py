@@ -32,6 +32,8 @@ gameSokoban = Game(matrix)
 size = gameSokoban.load_size()
 screen = pygame.display.set_mode(size)
 
+Game.fill_screen_with_floor(size, screen)
+
 # Biến điều khiển vòng lặp trò chơi
 running = True
 

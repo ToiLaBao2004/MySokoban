@@ -1,23 +1,37 @@
 import pygame
 import assets
+from game import Game
 
+A = """  #####
+###   #
+# $ # ##
+# #  . #
+#    # #
+## #   #
+ #@   ###
+ #####"""
 
-#Load sprites
+matrix = [list(row) for row in A.splitlines()]
+
 assets.load_sprites()
 sprites = pygame.sprite.LayeredUpdates()
 
-#Khởi tạo pygame
 pygame.init()
 
-#Set screen với size = 500, 500
-screen = pygame.display.set_mode((500, 500))
-
-#Set title
 pygame.display.set_caption("Sokoban")
+
+gameSokoban = Game(matrix)
+
+size = gameSokoban.load_size()
+screen = pygame.display.set_mode(size)
 
 running = True
 
 while running:
+    gameSokoban.print_game(screen)
+
+    pygame.display.flip()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

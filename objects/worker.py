@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class Worker kế thừa từ pygame.sprite.Sprite
+# Class Worker kế thừa từ pygame.sprite.Sprite
 class Worker(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Gán layer cho đối tượng Worker (nhân vật chính) đúng với thứ tự hiển thị

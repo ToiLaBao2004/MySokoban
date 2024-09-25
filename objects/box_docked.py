@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class BoxDocked kế thừa từ pygame.sprite.Sprite
+# Class BoxDocked kế thừa từ pygame.sprite.Sprite
 class BoxDocked(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Xác định layer của đối tượng BoxDocked (hộp đã đến vị trí đích)

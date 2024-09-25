@@ -1,6 +1,6 @@
 from enum import IntEnum, auto
 
-# Định nghĩa các lớp layer cho trò chơi
+# Định nghĩa các lớp layer cho game
 class Layer(IntEnum):
     # Các lớp sẽ được gán giá trị tự động (auto)
     FLOOR = auto()          # Layer của sàn (dưới cùng)

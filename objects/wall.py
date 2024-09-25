@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class Wall kế thừa từ pygame.sprite.Sprite
+# Class Wall kế thừa từ pygame.sprite.Sprite
 class Wall(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Gán layer cho đối tượng Wall (tường) đúng với thứ tự hiển thị

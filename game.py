@@ -8,7 +8,7 @@ from objects.worker_dock import WorkerDock
 
 class Game:
     def __init__(self, matrix):
-        # Khởi tạo ma trận để lưu trữ trạng thái trò chơi
+        # Khởi tạo ma trận để lưu trữ map trò chơi
         self.matrix = matrix
 
     def load_size(self):

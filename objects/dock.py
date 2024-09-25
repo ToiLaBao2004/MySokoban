@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class Dock kế thừa từ pygame.sprite.Sprite
+# Class Dock kế thừa từ pygame.sprite.Sprite
 class Dock(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Gán layer cho đối tượng Dock (vị trí đích của hộp)

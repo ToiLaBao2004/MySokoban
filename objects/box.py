@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class Box, kế thừa từ pygame.sprite.Sprite
+# Class Box, kế thừa từ pygame.sprite.Sprite
 class Box(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Xác định lớp của đối tượng Box

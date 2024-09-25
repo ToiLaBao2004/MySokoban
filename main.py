@@ -12,10 +12,10 @@ A = """  #####
  #@   ###
  #####"""
 
-# Chuyển đổi chuỗi thành danh sách các danh sách (ma trận)
+# Chuyển đổi chuỗi thành ma trận
 matrix = [list(row) for row in A.splitlines()]
 
-# Tải các sprite từ thư viện assets
+# Tải các sprite từ assets
 assets.load_sprites()
 
 # Khởi tạo pygame và tạo đối tượng LayeredUpdates cho các sprite
@@ -32,9 +32,10 @@ gameSokoban = Game(matrix)
 size = gameSokoban.load_size()
 screen = pygame.display.set_mode(size)
 
+# Fill floor vào cửa sổ vừa tạo
 Game.fill_screen_with_floor(size, screen)
 
-# Biến điều khiển vòng lặp trò chơi
+# Biến running
 running = True
 
 # Vòng lặp chính của trò chơi

@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import Layer
 
-# Định nghĩa class Floor kế thừa từ pygame.sprite.Sprite
+# Class Floor kế thừa từ pygame.sprite.Sprite
 class Floor(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         # Gán layer cho đối tượng Floor (sàn) đúng với thứ tự hiển thị

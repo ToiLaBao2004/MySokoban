@@ -2,7 +2,7 @@ import assets
 import pygame.sprite
 from layer import *
 
-class Box(pygame.sprite.Sprite):
+class Floor(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         self._layer = Layer.BOX
 

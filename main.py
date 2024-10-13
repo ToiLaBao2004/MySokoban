@@ -83,6 +83,13 @@ x = screen_width // 2 - 500 // 2
 y = screen_height // 2 - 300 // 2
 root.geometry(f"500x300+{x}+{y}")
 
+# Đặt weight cho các hàng và cột để chúng có thể mở rộng
+root.grid_columnconfigure(0, weight=1)
+root.grid_columnconfigure(1, weight=1)
+root.grid_columnconfigure(2, weight=1)
+root.grid_rowconfigure(1, weight=1)
+root.grid_rowconfigure(2, weight=1)
+
 # Hàm để tải hình ảnh của bản đồ dựa vào level được chọn
 def load_img_map():
     select_level = combobox.get().lower().replace(" ", "")  # Lấy level được chọn từ combobox
@@ -109,7 +116,7 @@ combobox.grid(row=0, column=1, padx=10, pady=10)
 
 # Nút bắt đầu trò chơi
 button_start = tk.Button(root, text="Start", command=start_game, font=("Arial", 10), width=12)
-button_start.grid(row=0, column=2, padx=10, pady=10)
+button_start.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
 # Hiển thị hình ảnh bản đồ mặc định khi chưa chọn level
 img_path_default = f"img_map\\chooselevel.png"
@@ -120,15 +127,15 @@ try:
 except FileNotFoundError:
     print(f"Không tìm thấy file {img_path_default}")
 image_label = tk.Label(root, image=img_tk)  # Hiển thị hình ảnh mặc định lên label
-image_label.grid(row=1, rowspan=2, column=0, columnspan=2, padx=10, pady=10)
+image_label.grid(row=1, rowspan=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
 # Nút giải bài bằng thuật toán BFS
 button_bfs = tk.Button(root, text="Solve with\n BFS", command="", font=("Arial", 10), width=12, height=4)
-button_bfs.grid(row=1, column=2, padx=10, pady=10)
+button_bfs.grid(row=1, column=2, padx=10, pady=10, sticky="nsew")
 
 # Nút giải bài bằng thuật toán DFS
 button_dfs = tk.Button(root, text="Solve with\n DFS", command="", font=("Arial", 10), width=12, height=4)
-button_dfs.grid(row=2, column=2, padx=10, pady=10)
+button_dfs.grid(row=2, column=2, padx=10, pady=10, sticky="nsew")
 
 # Sự kiện khi người dùng chọn level trong combobox, sẽ tải bản đồ hình ảnh
 combobox.bind("<<ComboboxSelected>>", lambda event: load_img_map())

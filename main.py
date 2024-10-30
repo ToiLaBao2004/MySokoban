@@ -5,7 +5,6 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-
 # Hàm để tải bản đồ (ma trận) của level được chọn
 def load_map(level):
     list_map = []  # Khởi tạo danh sách rỗng để lưu ma trận
@@ -44,7 +43,7 @@ def start_game():
     pygame.display.set_caption("Sokoban")
 
     # Khởi tạo đối tượng Game với ma trận đã tạo
-    gameSokoban = Game(matrix)
+    gameSokoban = Game(matrix,[])
 
     # Tính toán kích thước màn hình và tạo cửa sổ
     size = gameSokoban.load_size()
@@ -55,19 +54,34 @@ def start_game():
 
     # Biến điều kiện vòng lặp chạy trò chơi
     running = True
-
+    list_dock=gameSokoban.listDock()
     # Vòng lặp chính của trò chơi
     while running:
         # Vẽ trò chơi lên màn hình
+        gameSokoban.fill_screen_with_floor(size,screen)
         gameSokoban.print_game(screen)
 
         # Cập nhật màn hình
         pygame.display.flip()
-
         # Xử lý các sự kiện từ pygame
         for event in pygame.event.get():
+            if event.type== pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    if gameSokoban.stack_matrix:
+                        prev_matrix = gameSokoban.stack_matrix.pop()
+                        gameSokoban.matrix=prev_matrix
+                elif event.key == pygame.K_UP: gameSokoban.move(-1,0,list_dock)
+                elif event.key == pygame.K_DOWN: gameSokoban.move(1,0,list_dock)
+                elif event.key == pygame.K_LEFT: gameSokoban.move(0,-1,list_dock)
+                elif event.key == pygame.K_RIGHT: gameSokoban.move(0,1,list_dock)
             if event.type == pygame.QUIT:  # Nếu người dùng đóng cửa sổ
                 running = False  # Kết thúc vòng lặp
+        gameSokoban.print_game(screen)
+        pygame.display.update()
+        if gameSokoban.is_completed(list_dock)==True:
+            messagebox.showinfo("Chiến thắng","Bạn đã qua màn")
+            break
+        
 
     # Thoát khỏi pygame khi trò chơi kết thúc
     pygame.quit()

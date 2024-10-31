@@ -44,7 +44,7 @@ def start_game():
     pygame.display.set_caption("Sokoban")
 
     # Khởi tạo đối tượng Game với ma trận đã tạo
-    gameSokoban = Game(matrix)
+    gameSokoban = Game(matrix, [])
 
     # Tính toán kích thước màn hình và tạo cửa sổ
     size = gameSokoban.load_size()
@@ -55,10 +55,12 @@ def start_game():
 
     # Biến điều kiện vòng lặp chạy trò chơi
     running = True
+    list_dock = gameSokoban.listDock()
 
     # Vòng lặp chính của trò chơi
     while running:
         # Vẽ trò chơi lên màn hình
+        gameSokoban.fill_screen_with_floor(size, screen)
         gameSokoban.print_game(screen)
 
         # Cập nhật màn hình
@@ -66,8 +68,29 @@ def start_game():
 
         # Xử lý các sự kiện từ pygame
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    if gameSokoban.stack_matrix:  # Kiểm tra nếu có bước trước đó để quay lại
+                        prev_matrix = gameSokoban.stack_matrix.pop()  # Lấy ma trận trước đó
+                        gameSokoban.matrix = prev_matrix  # Cập nhật ma trận
+                elif event.key == pygame.K_UP:
+                    gameSokoban.move(-1, 0, list_dock)  # Di chuyển lên
+                elif event.key == pygame.K_DOWN:
+                    gameSokoban.move(1, 0, list_dock)  # Di chuyển xuống
+                elif event.key == pygame.K_LEFT:
+                    gameSokoban.move(0, -1, list_dock)  # Di chuyển sang trái
+                elif event.key == pygame.K_RIGHT:
+                    gameSokoban.move(0, 1, list_dock)  # Di chuyển sang phải
             if event.type == pygame.QUIT:  # Nếu người dùng đóng cửa sổ
                 running = False  # Kết thúc vòng lặp
+
+        gameSokoban.print_game(screen)
+        pygame.display.update()
+
+        # Kiểm tra xem người chơi đã hoàn thành trò chơi chưa
+        if gameSokoban.is_completed(list_dock):
+            messagebox.showinfo("Chiến thắng", "Bạn đã qua màn")  # Thông báo chiến thắng
+            break
 
     # Thoát khỏi pygame khi trò chơi kết thúc
     pygame.quit()
@@ -109,7 +132,8 @@ label = tk.Label(root, text="Select Level:", font=("Arial", 14))
 label.grid(row=0, column=0, padx=10, pady=10)
 
 # Tạo combobox để chọn level
-options = ['Choose Level', 'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9', 'Level 10']
+options = ['Choose Level', 'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5',
+           'Level 6', 'Level 7', 'Level 8', 'Level 9', 'Level 10']
 combobox = ttk.Combobox(root, values=options, width=13, font=("Arial", 12))
 combobox.current(0)
 combobox.grid(row=0, column=1, padx=10, pady=10)
@@ -126,6 +150,7 @@ try:
     img_tk = ImageTk.PhotoImage(img)  # Tạo đối tượng PhotoImage từ hình ảnh đã thay đổi kích thước
 except FileNotFoundError:
     print(f"Không tìm thấy file {img_path_default}")
+
 image_label = tk.Label(root, image=img_tk)  # Hiển thị hình ảnh mặc định lên label
 image_label.grid(row=1, rowspan=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 

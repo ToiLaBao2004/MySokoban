@@ -6,6 +6,10 @@ from objects.wall import Wall
 from objects.worker import Worker
 from objects.worker_dock import WorkerDock
 import copy
+import pygame
+import tkinter as tk
+from tkinter import messagebox
+
 
 class Game:
     def __init__(self, matrix, stack_matrix):
@@ -121,6 +125,9 @@ class Game:
 
             self.matrix[cur_peopleX][cur_peopleY] = " "  # Xóa vị trí cũ của công nhân
 
+            if self.is_deadlocked():  # Nếu bị deadlock, thực hiện thông báo
+                self.handle_deadlock()
+
     def move(self, x, y, dock):
         self.stack_matrix.append(copy.deepcopy(self.matrix))  # Lưu lại trạng thái hiện tại của ma trận
         cur_x, cur_y = self.getPosition()
@@ -133,3 +140,55 @@ class Game:
         for i, j in dock:
             if self.matrix[i][j] not in ["*", "@"]:
                 self.matrix[i][j] = "."  # Cập nhật trạng thái bến đỗ
+
+    # Kiểm tra deadlock
+    def is_deadlocked(self):
+        for y, row in enumerate(self.matrix):
+            for x, char in enumerate(row):
+                if char == '$' or char == '*':  # kiem tra box
+                    if self.is_box_trapped(x, y):
+                        return True  # Deadlock 
+        return False
+
+    # Kiểm tra box có bị kẹt không
+    def is_box_trapped(self, x, y):
+        if (self.is_wall(x - 1, y) and self.is_wall(x, y - 1)) or \
+           (self.is_wall(x + 1, y) and self.is_wall(x, y - 1)) or \
+           (self.is_wall(x - 1, y) and self.is_wall(x, y + 1)) or \
+           (self.is_wall(x + 1, y) and self.is_wall(x, y + 1)) or \
+           (self.is_box(x - 1, y) and self.is_box(x, y - 1)) or \
+           (self.is_box(x + 1, y) and self.is_box(x, y - 1)) or \
+           (self.is_box(x - 1, y) and self.is_box(x, y + 1)) or \
+           (self.is_box(x + 1, y) and self.is_box(x, y + 1)) or \
+           (self.is_wall(x - 1, y) and self.is_box(x, y - 1)) or \
+           (self.is_wall(x + 1, y) and self.is_box(x, y - 1)) or \
+           (self.is_wall(x - 1, y) and self.is_box(x, y + 1)) or \
+           (self.is_wall(x + 1, y) and self.is_box(x, y + 1)) or \
+           (self.is_box(x - 1, y) and self.is_wall(x, y - 1)) or \
+           (self.is_box(x + 1, y) and self.is_wall(x, y - 1)) or \
+           (self.is_box(x - 1, y) and self.is_wall(x, y + 1)) or \
+           (self.is_box(x + 1, y) and self.is_wall(x, y + 1)):
+            return True
+
+    # Kiểm tra vật thể có phải là wall không
+    def is_wall(self, x, y):
+        if x < 0 or y < 0 or y >= len(self.matrix) or x >= len(self.matrix[y]):
+            return True
+        return self.matrix[y][x] == '#'
+    
+    # Kiểm tra vật thể có phải là box không
+    def is_box(self, x, y):
+        if self.matrix[y][x] == '$':
+            return True
+        
+    # Thực hiện hành động khi bị deadlock
+    def handle_deadlock(self):
+        response = messagebox.askyesno("THÔNG BÁO", "Hộp đã bị kẹt! Bạn có muốn chơi lại không?")
+        if response:  # Nếu người chơi chọn "Có"
+            self.restart_game() # chưa có hàm restart
+        else:  # Nếu người chơi chọn "Không"
+            response = messagebox.askyesno("THÔNG BÁO", "Bạn muốn chơi tiếp không hay kết thúc trò chơi?")
+            if response:
+                self.matrix = self.stack_matrix.pop()  # Quay lại bước trước
+            else: 
+                pygame.quit()    

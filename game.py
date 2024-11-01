@@ -78,7 +78,7 @@ class Game:
         for i, row in enumerate(self.matrix):
             for j, char in enumerate(row):
                 if char == "@":
-                    return (i, j)
+                    return i, j
 
     # Lấy danh sách các điểm đích đến của thùng
     def listDock(self):

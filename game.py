@@ -6,10 +6,6 @@ from objects.wall import Wall
 from objects.worker import Worker
 from objects.worker_dock import WorkerDock
 import copy
-import pygame
-import tkinter as tk
-from tkinter import messagebox
-
 
 class Game:
     def __init__(self, matrix, stack_matrix):
@@ -29,36 +25,25 @@ class Game:
         return x * 64, y * 64  # Trả về kích thước màn hình (chiều rộng, chiều cao)
 
     def print_game(self, screen):
-        # Vẽ trò chơi lên màn hình
-        x = 0
-        y = 0
+        x, y = 0, 0
+
+        object_map = {
+            '#': Wall,
+            '@': Worker,
+            '.': Dock,
+            '$': Box,
+            '*': BoxDocked,
+            '+': WorkerDock
+        }
 
         for row in self.matrix:
             for char in row:
-                # Vẽ các đối tượng tương ứng với ký tự trong ma trận
-                if char == '#':  # tường
-                    wall = Wall(x, y)
-                    screen.blit(wall.image, wall.rect)
-                elif char == '@':  # công nhân
-                    worker = Worker(x, y)
-                    screen.blit(worker.image, worker.rect)
-                elif char == '.':  # bến đỗ
-                    dock = Dock(x, y)
-                    screen.blit(dock.image, dock.rect)
-                elif char == '$':  # thùng
-                    box = Box(x, y)
-                    screen.blit(box.image, box.rect)
-                elif char == '*':  # thùng trên bến đỗ
-                    box_docked = BoxDocked(x, y)
-                    screen.blit(box_docked.image, box_docked.rect)
-                elif char == '+':  # công nhân trên bến đỗ
-                    worker_dock = WorkerDock(x, y)
-                    screen.blit(worker_dock.image, worker_dock.rect)
-
-                x += 64  # Di chuyển tọa độ x cho cột tiếp theo
-
-            x = 0  # Reset tọa độ x về 0 cho hàng tiếp theo
-            y += 64  # Di chuyển tọa độ y cho hàng tiếp theo
+                if char in object_map:
+                    obj = object_map[char](x, y)
+                    screen.blit(obj.image, obj.rect)
+                x += 64
+            x = 0
+            y += 64
 
     @staticmethod  # Định nghĩa phương thức như phương thức tĩnh
     def fill_screen_with_floor(size, screen):
@@ -101,94 +86,66 @@ class Game:
     def canPushBox(self, x, y):
         return self.matrix[x][y] not in ["#", "$", "*"]
 
-    # Di chuyển khi không đẩy thùng
+    # Hàm cập nhật vị trí trong ma trận
+    def update_position(self, old_x, old_y, new_x, new_y, symbol):
+        self.matrix[old_x][old_y] = " "  # Xóa vị trí cũ
+        self.matrix[new_x][new_y] = symbol  # Đặt ký tự mới tại vị trí mới
+
+    # Di chuyển công nhân mà không đẩy thùng
     def next_move(self, x, y):
         cur_x, cur_y = self.getPosition()
         new_x, new_y = cur_x + x, cur_y + y
-        self.matrix[new_x][new_y] = "@"  # Cập nhật vị trí của công nhân
-        self.matrix[cur_x][cur_y] = " "  # Xóa vị trí cũ của công nhân
+        self.update_position(cur_x, cur_y, new_x, new_y, "@")  # Cập nhật vị trí công nhân
 
     # Di chuyển và đẩy thùng
     def move_box(self, x, y):
-        cur_peopleX, cur_peopleY = self.getPosition()
-        cur_boxX, cur_boxY = cur_peopleX + x, cur_peopleY + y
-
-        if self.canPushBox(cur_boxX + x, cur_boxY + y):
-            self.matrix[cur_boxX][cur_boxY] = "@"  # Đặt công nhân vào vị trí mới của thùng
-
-            new_boxX, new_boxY = cur_boxX + x, cur_boxY + y
-            if self.matrix[new_boxX][new_boxY] == " ":
-                self.matrix[new_boxX][new_boxY] = "$"  # Đặt thùng vào vị trí trống
-
-            elif self.matrix[new_boxX][new_boxY] == ".":
-                self.matrix[new_boxX][new_boxY] = "*"  # Đặt thùng lên bến đỗ
-
-            self.matrix[cur_peopleX][cur_peopleY] = " "  # Xóa vị trí cũ của công nhân
-
-            if self.is_deadlocked():  # Nếu bị deadlock, thực hiện thông báo
-                self.handle_deadlock()
-
-    def move(self, x, y, dock):
-        self.stack_matrix.append(copy.deepcopy(self.matrix))  # Lưu lại trạng thái hiện tại của ma trận
         cur_x, cur_y = self.getPosition()
+        cur_box_x, cur_box_y = cur_x + x, cur_y + y  # Vị trí của thùng
+        new_box_x, new_box_y = cur_box_x + x, cur_box_y + y  # Vị trí mới của thùng
 
-        if self.canMove(cur_x + x, cur_y + y):
-            self.next_move(x, y)  # Di chuyển công nhân nếu có thể
-        elif self.matrix[cur_x + x][cur_y + y] in ["*", "$"]:
-            self.move_box(x, y)  # Di chuyển và đẩy thùng nếu có thể
+        # Kiểm tra nếu thùng có thể đẩy đến vị trí mới
+        if self.canPushBox(new_box_x, new_box_y):
+            # Di chuyển công nhân đến vị trí thùng và cập nhật vị trí thùng
+            self.update_position(cur_x, cur_y, cur_box_x, cur_box_y, "@")
+            if self.matrix[new_box_x][new_box_y] == " ":
+                self.matrix[new_box_x][new_box_y] = "$"  # Đặt thùng vào vị trí trống
+            elif self.matrix[new_box_x][new_box_y] == ".":
+                self.matrix[new_box_x][new_box_y] = "*"  # Đặt thùng lên bến đỗ
 
+    # Thực hiện di chuyển dựa trên trạng thái hiện tại
+    def move(self, x, y, dock):
+        # Lưu lại trạng thái hiện tại của ma trận để có thể hoàn tác
+        self.stack_matrix.append(copy.deepcopy(self.matrix))
+        cur_x, cur_y = self.getPosition()
+        next_x, next_y = cur_x + x, cur_y + y
+
+        # Kiểm tra xem công nhân có thể di chuyển mà không đẩy thùng
+        if self.canMove(next_x, next_y):
+            self.next_move(x, y)
+        elif self.matrix[next_x][next_y] in ["*", "$"]:
+            # Nếu có thùng ở vị trí tiếp theo, cố gắng di chuyển và đẩy thùng
+            self.move_box(x, y)
+
+        # Cập nhật lại trạng thái của các điểm đích
         for i, j in dock:
             if self.matrix[i][j] not in ["*", "@"]:
-                self.matrix[i][j] = "."  # Cập nhật trạng thái bến đỗ
+                self.matrix[i][j] = "."
 
-    # Kiểm tra deadlock
-    def is_deadlocked(self):
-        for y, row in enumerate(self.matrix):
-            for x, char in enumerate(row):
-                if char == '$' or char == '*':  # kiem tra box
-                    if self.is_box_trapped(x, y):
-                        return True  # Deadlock 
+    # Kiểm tra xem có thùng nào bị deadlock không
+    def is_deadlock(self, box_x, box_y):
+        # Kiểm tra nếu thùng bị kẹt ở góc giữa hai bức tường hoặc giữa bức tường và thùng khác
+        if (self.matrix[box_x-1][box_y] in ['#', '$'] and self.matrix[box_x][box_y-1] in ['#', '$']) or \
+           (self.matrix[box_x-1][box_y] in ['#', '$'] and self.matrix[box_x][box_y+1] in ['#', '$']) or \
+           (self.matrix[box_x+1][box_y] in ['#', '$'] and self.matrix[box_x][box_y-1] in ['#', '$']) or \
+           (self.matrix[box_x+1][box_y] in ['#', '$'] and self.matrix[box_x][box_y+1] in ['#', '$']):
+            return True
         return False
 
-    # Kiểm tra box có bị kẹt không
-    def is_box_trapped(self, x, y):
-        if (self.is_wall(x - 1, y) and self.is_wall(x, y - 1)) or \
-           (self.is_wall(x + 1, y) and self.is_wall(x, y - 1)) or \
-           (self.is_wall(x - 1, y) and self.is_wall(x, y + 1)) or \
-           (self.is_wall(x + 1, y) and self.is_wall(x, y + 1)) or \
-           (self.is_box(x - 1, y) and self.is_box(x, y - 1)) or \
-           (self.is_box(x + 1, y) and self.is_box(x, y - 1)) or \
-           (self.is_box(x - 1, y) and self.is_box(x, y + 1)) or \
-           (self.is_box(x + 1, y) and self.is_box(x, y + 1)) or \
-           (self.is_wall(x - 1, y) and self.is_box(x, y - 1)) or \
-           (self.is_wall(x + 1, y) and self.is_box(x, y - 1)) or \
-           (self.is_wall(x - 1, y) and self.is_box(x, y + 1)) or \
-           (self.is_wall(x + 1, y) and self.is_box(x, y + 1)) or \
-           (self.is_box(x - 1, y) and self.is_wall(x, y - 1)) or \
-           (self.is_box(x + 1, y) and self.is_wall(x, y - 1)) or \
-           (self.is_box(x - 1, y) and self.is_wall(x, y + 1)) or \
-           (self.is_box(x + 1, y) and self.is_wall(x, y + 1)):
-            return True
-
-    # Kiểm tra vật thể có phải là wall không
-    def is_wall(self, x, y):
-        if x < 0 or y < 0 or y >= len(self.matrix) or x >= len(self.matrix[y]):
-            return True
-        return self.matrix[y][x] == '#'
-    
-    # Kiểm tra vật thể có phải là box không
-    def is_box(self, x, y):
-        if self.matrix[y][x] == '$':
-            return True
-        
-    # Thực hiện hành động khi bị deadlock
-    def handle_deadlock(self):
-        response = messagebox.askyesno("THÔNG BÁO", "Hộp đã bị kẹt! Bạn có muốn chơi lại không?")
-        if response:  # Nếu người chơi chọn "Có"
-            self.restart_game() # chưa có hàm restart
-        else:  # Nếu người chơi chọn "Không"
-            response = messagebox.askyesno("THÔNG BÁO", "Bạn muốn chơi tiếp không hay kết thúc trò chơi?")
-            if response:
-                self.matrix = self.stack_matrix.pop()  # Quay lại bước trước
-            else: 
-                pygame.quit()    
+    # Kiểm tra tất cả các thùng xem có thùng nào bị deadlock không
+    def check_all_boxes_for_deadlock(self):
+        for i, row in enumerate(self.matrix):
+            for j, char in enumerate(row):
+                if char == '$':  # Nếu gặp thùng
+                    if self.is_deadlock(i, j):
+                        return True  # Nếu có ít nhất một thùng bị deadlock, trả về True
+        return False  # Không có thùng nào bị deadlock

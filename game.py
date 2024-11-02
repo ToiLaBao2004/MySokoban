@@ -25,36 +25,25 @@ class Game:
         return x * 64, y * 64  # Trả về kích thước màn hình (chiều rộng, chiều cao)
 
     def print_game(self, screen):
-        # Vẽ trò chơi lên màn hình
-        x = 0
-        y = 0
+        x, y = 0, 0
+
+        object_map = {
+            '#': Wall,
+            '@': Worker,
+            '.': Dock,
+            '$': Box,
+            '*': BoxDocked,
+            '+': WorkerDock
+        }
 
         for row in self.matrix:
             for char in row:
-                # Vẽ các đối tượng tương ứng với ký tự trong ma trận
-                if char == '#':  # tường
-                    wall = Wall(x, y)
-                    screen.blit(wall.image, wall.rect)
-                elif char == '@':  # công nhân
-                    worker = Worker(x, y)
-                    screen.blit(worker.image, worker.rect)
-                elif char == '.':  # bến đỗ
-                    dock = Dock(x, y)
-                    screen.blit(dock.image, dock.rect)
-                elif char == '$':  # thùng
-                    box = Box(x, y)
-                    screen.blit(box.image, box.rect)
-                elif char == '*':  # thùng trên bến đỗ
-                    box_docked = BoxDocked(x, y)
-                    screen.blit(box_docked.image, box_docked.rect)
-                elif char == '+':  # công nhân trên bến đỗ
-                    worker_dock = WorkerDock(x, y)
-                    screen.blit(worker_dock.image, worker_dock.rect)
-
-                x += 64  # Di chuyển tọa độ x cho cột tiếp theo
-
-            x = 0  # Reset tọa độ x về 0 cho hàng tiếp theo
-            y += 64  # Di chuyển tọa độ y cho hàng tiếp theo
+                if char in object_map:
+                    obj = object_map[char](x, y)
+                    screen.blit(obj.image, obj.rect)
+                x += 64
+            x = 0
+            y += 64
 
     @staticmethod  # Định nghĩa phương thức như phương thức tĩnh
     def fill_screen_with_floor(size, screen):
@@ -97,39 +86,47 @@ class Game:
     def canPushBox(self, x, y):
         return self.matrix[x][y] not in ["#", "$", "*"]
 
-    # Di chuyển khi không đẩy thùng
+    # Hàm cập nhật vị trí trong ma trận
+    def update_position(self, old_x, old_y, new_x, new_y, symbol):
+        self.matrix[old_x][old_y] = " "  # Xóa vị trí cũ
+        self.matrix[new_x][new_y] = symbol  # Đặt ký tự mới tại vị trí mới
+
+    # Di chuyển công nhân mà không đẩy thùng
     def next_move(self, x, y):
         cur_x, cur_y = self.getPosition()
         new_x, new_y = cur_x + x, cur_y + y
-        self.matrix[new_x][new_y] = "@"  # Cập nhật vị trí của công nhân
-        self.matrix[cur_x][cur_y] = " "  # Xóa vị trí cũ của công nhân
+        self.update_position(cur_x, cur_y, new_x, new_y, "@")  # Cập nhật vị trí công nhân
 
     # Di chuyển và đẩy thùng
     def move_box(self, x, y):
-        cur_peopleX, cur_peopleY = self.getPosition()
-        cur_boxX, cur_boxY = cur_peopleX + x, cur_peopleY + y
-
-        if self.canPushBox(cur_boxX + x, cur_boxY + y):
-            self.matrix[cur_boxX][cur_boxY] = "@"  # Đặt công nhân vào vị trí mới của thùng
-
-            new_boxX, new_boxY = cur_boxX + x, cur_boxY + y
-            if self.matrix[new_boxX][new_boxY] == " ":
-                self.matrix[new_boxX][new_boxY] = "$"  # Đặt thùng vào vị trí trống
-
-            elif self.matrix[new_boxX][new_boxY] == ".":
-                self.matrix[new_boxX][new_boxY] = "*"  # Đặt thùng lên bến đỗ
-
-            self.matrix[cur_peopleX][cur_peopleY] = " "  # Xóa vị trí cũ của công nhân
-
-    def move(self, x, y, dock):
-        self.stack_matrix.append(copy.deepcopy(self.matrix))  # Lưu lại trạng thái hiện tại của ma trận
         cur_x, cur_y = self.getPosition()
+        cur_box_x, cur_box_y = cur_x + x, cur_y + y  # Vị trí của thùng
+        new_box_x, new_box_y = cur_box_x + x, cur_box_y + y  # Vị trí mới của thùng
 
-        if self.canMove(cur_x + x, cur_y + y):
-            self.next_move(x, y)  # Di chuyển công nhân nếu có thể
-        elif self.matrix[cur_x + x][cur_y + y] in ["*", "$"]:
-            self.move_box(x, y)  # Di chuyển và đẩy thùng nếu có thể
+        # Kiểm tra nếu thùng có thể đẩy đến vị trí mới
+        if self.canPushBox(new_box_x, new_box_y):
+            # Di chuyển công nhân đến vị trí thùng và cập nhật vị trí thùng
+            self.update_position(cur_x, cur_y, cur_box_x, cur_box_y, "@")
+            if self.matrix[new_box_x][new_box_y] == " ":
+                self.matrix[new_box_x][new_box_y] = "$"  # Đặt thùng vào vị trí trống
+            elif self.matrix[new_box_x][new_box_y] == ".":
+                self.matrix[new_box_x][new_box_y] = "*"  # Đặt thùng lên bến đỗ
 
+    # Thực hiện di chuyển dựa trên trạng thái hiện tại
+    def move(self, x, y, dock):
+        # Lưu lại trạng thái hiện tại của ma trận để có thể hoàn tác
+        self.stack_matrix.append(copy.deepcopy(self.matrix))
+        cur_x, cur_y = self.getPosition()
+        next_x, next_y = cur_x + x, cur_y + y
+
+        # Kiểm tra xem công nhân có thể di chuyển mà không đẩy thùng
+        if self.canMove(next_x, next_y):
+            self.next_move(x, y)
+        elif self.matrix[next_x][next_y] in ["*", "$"]:
+            # Nếu có thùng ở vị trí tiếp theo, cố gắng di chuyển và đẩy thùng
+            self.move_box(x, y)
+
+        # Cập nhật lại trạng thái của các điểm đích
         for i, j in dock:
             if self.matrix[i][j] not in ["*", "@"]:
-                self.matrix[i][j] = "."  # Cập nhật trạng thái bến đỗ
+                self.matrix[i][j] = "."

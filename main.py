@@ -24,6 +24,14 @@ def load_map(level):
 
     return list_map  # Trả về danh sách chứa ma trận của level
 
+# Hàm hiển thị cảnh báo "deadlock" bằng pygame
+def show_deadlock_warning(screen):
+    font = pygame.font.SysFont("Arial", 24)
+    warning_text = font.render("You're stuck! Press 'Z' to undo.", True, (255, 0, 0))  # Text màu đỏ
+    text_rect = warning_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))  # Đặt ở giữa màn hình
+    screen.blit(warning_text, text_rect)
+    pygame.display.flip()
+
 # Hàm khởi động trò chơi
 def start_game():
     select_level = combobox.get().lower().replace(" ", "")  # Lấy level được chọn từ combobox
@@ -84,7 +92,12 @@ def start_game():
             if event.type == pygame.QUIT:  # Nếu người dùng đóng cửa sổ
                 running = False  # Kết thúc vòng lặp
 
-        gameSokoban.print_game(screen)
+        # Kiểm tra deadlock sau mỗi lần di chuyển
+        if gameSokoban.check_all_boxes_for_deadlock():
+            show_deadlock_warning(screen)  # Hiển thị cảnh báo deadlock
+        else:
+            gameSokoban.print_game(screen)
+
         pygame.display.update()
 
         # Kiểm tra xem người chơi đã hoàn thành trò chơi chưa

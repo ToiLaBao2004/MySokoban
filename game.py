@@ -130,3 +130,22 @@ class Game:
         for i, j in dock:
             if self.matrix[i][j] not in ["*", "@"]:
                 self.matrix[i][j] = "."
+
+    # Kiểm tra xem có thùng nào bị deadlock không
+    def is_deadlock(self, box_x, box_y):
+        # Kiểm tra nếu thùng bị kẹt ở góc giữa hai bức tường hoặc giữa bức tường và thùng khác
+        if (self.matrix[box_x-1][box_y] in ['#', '$'] and self.matrix[box_x][box_y-1] in ['#', '$']) or \
+           (self.matrix[box_x-1][box_y] in ['#', '$'] and self.matrix[box_x][box_y+1] in ['#', '$']) or \
+           (self.matrix[box_x+1][box_y] in ['#', '$'] and self.matrix[box_x][box_y-1] in ['#', '$']) or \
+           (self.matrix[box_x+1][box_y] in ['#', '$'] and self.matrix[box_x][box_y+1] in ['#', '$']):
+            return True
+        return False
+
+    # Kiểm tra tất cả các thùng xem có thùng nào bị deadlock không
+    def check_all_boxes_for_deadlock(self):
+        for i, row in enumerate(self.matrix):
+            for j, char in enumerate(row):
+                if char == '$':  # Nếu gặp thùng
+                    if self.is_deadlock(i, j):
+                        return True  # Nếu có ít nhất một thùng bị deadlock, trả về True
+        return False  # Không có thùng nào bị deadlock

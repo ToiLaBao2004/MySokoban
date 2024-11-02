@@ -32,6 +32,14 @@ def show_deadlock_warning(screen):
     screen.blit(warning_text, text_rect)
     pygame.display.flip()
 
+# Hàm hiển thị cảnh báo "You Win!" bằng pygame
+def show_win_game(screen):
+    font = pygame.font.SysFont("Arial", 36)
+    win_text = font.render("You Win!", True, (0, 255, 0))  # Text màu xanh lá cây
+    text_rect = win_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))  # Đặt ở giữa màn hình
+    screen.blit(win_text, text_rect)
+    pygame.display.flip()
+
 # Hàm khởi động trò chơi
 def start_game():
     select_level = combobox.get().lower().replace(" ", "")  # Lấy level được chọn từ combobox
@@ -95,15 +103,14 @@ def start_game():
         # Kiểm tra deadlock sau mỗi lần di chuyển
         if gameSokoban.check_all_boxes_for_deadlock():
             show_deadlock_warning(screen)  # Hiển thị cảnh báo deadlock
-        else:
-            gameSokoban.print_game(screen)
 
+        gameSokoban.print_game(screen)
         pygame.display.update()
 
         # Kiểm tra xem người chơi đã hoàn thành trò chơi chưa
         if gameSokoban.is_completed(list_dock):
-            messagebox.showinfo("Chiến thắng", "Bạn đã qua màn")  # Thông báo chiến thắng
-            break
+            show_win_game(screen)
+
 
     # Thoát khỏi pygame khi trò chơi kết thúc
     pygame.quit()

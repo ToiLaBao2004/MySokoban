@@ -172,15 +172,7 @@ except FileNotFoundError:
     print(f"Không tìm thấy file {img_path_default}")
 
 image_label = tk.Label(root, image=img_tk)  # Hiển thị hình ảnh mặc định lên label
-image_label.grid(row=1, rowspan=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
-
-# Nút giải bài bằng thuật toán BFS
-button_bfs = tk.Button(root, text="Solve with\n BFS", command="", font=("Arial", 10), width=12, height=4)
-button_bfs.grid(row=1, column=2, padx=10, pady=10, sticky="nsew")
-
-# Nút giải bài bằng thuật toán DFS
-button_dfs = tk.Button(root, text="Solve with\n DFS", command="", font=("Arial", 10), width=12, height=4)
-button_dfs.grid(row=2, column=2, padx=10, pady=10, sticky="nsew")
+image_label.grid(row=1, rowspan=2, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
 # Sự kiện khi người dùng chọn level trong combobox, sẽ tải bản đồ hình ảnh
 combobox.bind("<<ComboboxSelected>>", lambda event: load_img_map())

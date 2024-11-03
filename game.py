@@ -71,12 +71,12 @@ class Game:
 
     # Lấy danh sách các điểm đích đến của thùng
     def listDock(self):
-        dock = []
+        dockList = []
         for i, row in enumerate(self.matrix):
             for j, char in enumerate(row):
                 if char == ".":
-                    dock.append((i, j))
-        return dock
+                    dockList.append((i, j))
+        return dockList
 
     # Kiểm tra xem người chơi có thể đi vào ô đó hay không
     def canMove(self, x, y):

@@ -113,18 +113,18 @@ class Game:
                 self.matrix[new_box_x][new_box_y] = "*"  # Đặt thùng lên bến đỗ
 
     # Thực hiện di chuyển dựa trên trạng thái hiện tại
-    def move(self, x, y, dock):
+    def move(self, y, x, dock):
         # Lưu lại trạng thái hiện tại của ma trận để có thể hoàn tác
         self.stack_matrix.append(copy.deepcopy(self.matrix))
         cur_x, cur_y = self.getPosition()
-        next_x, next_y = cur_x + x, cur_y + y
+        next_x, next_y = cur_x + y, cur_y + x
 
         # Kiểm tra xem công nhân có thể di chuyển mà không đẩy thùng
         if self.canMove(next_x, next_y):
-            self.next_move(x, y)
+            self.next_move(y, x)
         elif self.matrix[next_x][next_y] in ["*", "$"]:
             # Nếu có thùng ở vị trí tiếp theo, cố gắng di chuyển và đẩy thùng
-            self.move_box(x, y)
+            self.move_box(y, x)
 
         # Cập nhật lại trạng thái của các điểm đích
         for i, j in dock:

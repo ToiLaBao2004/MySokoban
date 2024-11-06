@@ -1,6 +1,6 @@
 # Sokoban Game with AI
 ## How to Play
-You can use the arrow keys -> <- up and down to play the game.<br>
+You can use the arrow keys ↑ ↓ ← → to play the game.<br>
 Press the Z button to go back to the previous position.<br>
 Press the B button to solve with BFS.<br>
 Press the D button to solve with DFS.<br>

@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-from solver import bfs, Solve
+from solver import bfs, dfs, Solve
 
 # Hàm để tải bản đồ (ma trận) của level được chọn
 def load_map(level):
@@ -108,6 +108,11 @@ def start_game():
                 elif event.key == pygame.K_b:
                     solve.matrix = gameSokoban.matrix
                     path = bfs(solve)
+                    lenPath = len(path)
+                    machinePlay = True
+                elif event.key == pygame.K_d:
+                    solve.matrix = gameSokoban.matrix
+                    path = dfs(solve)
                     lenPath = len(path)
                     machinePlay = True
             if event.type == pygame.QUIT:  # Nếu người dùng đóng cửa sổ

@@ -1,3 +1,4 @@
+import time
 import pygame
 import assets
 from game import Game
@@ -5,6 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
+from solver import bfs, Solve
 
 # Hàm để tải bản đồ (ma trận) của level được chọn
 def load_map(level):
@@ -73,6 +75,12 @@ def start_game():
     running = True
     list_dock = gameSokoban.listDock()
 
+    machinePlay = False
+    path = ""
+    solve = Solve(matrix)
+    lenPath = 0
+    i = 0
+
     # Vòng lặp chính của trò chơi
     while running:
         # Vẽ trò chơi lên màn hình
@@ -97,12 +105,34 @@ def start_game():
                     gameSokoban.move(0, -1, list_dock)  # Di chuyển sang trái
                 elif event.key == pygame.K_RIGHT:
                     gameSokoban.move(0, 1, list_dock)  # Di chuyển sang phải
+                elif event.key == pygame.K_b:
+                    solve.matrix = gameSokoban.matrix
+                    path = bfs(solve)
+                    lenPath = len(path)
+                    machinePlay = True
             if event.type == pygame.QUIT:  # Nếu người dùng đóng cửa sổ
                 running = False  # Kết thúc vòng lặp
 
-        # Kiểm tra deadlock sau mỗi lần di chuyển
-        if gameSokoban.check_all_boxes_for_deadlock():
-            show_deadlock_warning(screen)  # Hiển thị cảnh báo deadlock
+        if machinePlay:
+            if i == lenPath:
+                machinePlay = False
+            elif i < lenPath:
+                move = path[i]
+                if move == 'U':
+                    solve.move(-1, 0)
+                elif move == 'D':
+                    solve.move(1, 0)
+                elif move == 'L':
+                    solve.move(0, -1)
+                elif move == 'R':
+                    solve.move(0, 1)
+            i += 1
+            time.sleep(0.1)
+
+        if not machinePlay:
+            # Kiểm tra deadlock sau mỗi lần di chuyển
+            if gameSokoban.check_all_boxes_for_deadlock():
+                show_deadlock_warning(screen)  # Hiển thị cảnh báo deadlock
 
         gameSokoban.print_game(screen)
         pygame.display.update()

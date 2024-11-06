@@ -2,8 +2,6 @@ import copy
 import time
 from collections import deque
 
-from main import load_map
-
 class Solve:
     def __init__(self, matrix):
         self.matrix = matrix
@@ -98,10 +96,10 @@ class Solve:
 
 def validMove(state):
     moves = {
-        "U": (-1, 0),
-        "D": (1, 0),
-        "L": (0, -1),
-        "R": (0, 1)
+        'U': (-1, 0),
+        'D': (1, 0),
+        'L': (0, -1),
+        'R': (0, 1)
     }
 
     valid_moves = []
@@ -173,13 +171,13 @@ def bfs(game):
             newState = copy.deepcopy(currState)
             node_generated += 1
 
-            if step == "U":
+            if step == 'U':
                 newState.move(-1, 0)
-            elif step == "D":
+            elif step == 'D':
                 newState.move(1, 0)
-            elif step == "L":
+            elif step == 'L':
                 newState.move(0, -1)
-            elif step == "R":
+            elif step == 'R':
                 newState.move(0, 1)
 
             newState.pathSolution += step
@@ -191,17 +189,10 @@ def bfs(game):
                 print("Solution:", newState.pathSolution, "Number steps:", len(newState.pathSolution))
                 return newState.pathSolution
 
-            if tuple(map(tuple, newState.getMatrix())) not in visited and not isDeadlock(newState):
+            if (tuple(map(tuple, newState.getMatrix())) not in visited) and (not isDeadlock(newState)):
                 queue.append(newState)
                 visited.add(tuple(map(tuple, newState.getMatrix())))
 
+    print(node_generated)
     print("No Solution!")
     return "NoSol"
-
-
-
-
-mapp = load_map("level2")
-solve = Solve(mapp)
-solve.printState()
-result = bfs(solve)

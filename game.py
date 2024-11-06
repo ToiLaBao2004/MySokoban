@@ -4,7 +4,6 @@ from objects.dock import Dock
 from objects.floor import Floor
 from objects.wall import Wall
 from objects.worker import Worker
-from objects.worker_dock import WorkerDock
 import copy
 
 class Game:
@@ -33,7 +32,6 @@ class Game:
             '.': Dock,
             '$': Box,
             '*': BoxDocked,
-            '+': WorkerDock
         }
 
         for row in self.matrix:

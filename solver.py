@@ -114,25 +114,25 @@ def isDeadlock(state):
     boxListPosition = state.boxPosition()
 
     deadlock_conditions = [
-        # Góc trên bên trái
+        # Goc tren ben trai
         lambda box_y, box_x: (
                 state.getMatrixElement(box_y, box_x - 1) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y - 1, box_x) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y - 1, box_x - 1) in ['#', '$', '*']
         ),
-        # Góc trên bên phải
+        # Goc tren ben phai
         lambda box_y, box_x: (
                 state.getMatrixElement(box_y, box_x + 1) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y - 1, box_x) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y - 1, box_x + 1) in ['#', '$', '*']
         ),
-        # Góc dưới bên trái
+        # Goc duoi ben trai
         lambda box_y, box_x: (
                 state.getMatrixElement(box_y, box_x - 1) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y + 1, box_x) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y + 1, box_x - 1) in ['#', '$', '*']
         ),
-        # Góc dưới bên phải
+        # Goc duoi ben phai
         lambda box_y, box_x: (
                 state.getMatrixElement(box_y, box_x + 1) in ['#', '$', '*'] and
                 state.getMatrixElement(box_y + 1, box_x) in ['#', '$', '*'] and

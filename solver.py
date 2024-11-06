@@ -1,3 +1,7 @@
+import copy
+import time
+from collections import deque
+
 from main import load_map
 
 class Solve:
@@ -146,8 +150,58 @@ def isDeadlock(state):
 
     return False
 
-mapp = load_map("level1")
+def bfs(game):
+    start = time.time()
+    node_generated = 0
+    state_state = copy.deepcopy(game)
+    node_generated += 1
+
+    if isDeadlock(state_state):
+        print("No Solution!")
+        return "NoSol"
+
+    queue = deque([state_state])
+    visited = set()
+    visited.add(tuple(map(tuple, state_state.getMatrix())))
+
+    print("Processing BFS......")
+
+    while queue:
+        currState = queue.popleft()
+        move = validMove(currState)
+        for step in move:
+            newState = copy.deepcopy(currState)
+            node_generated += 1
+
+            if step == "U":
+                newState.move(-1, 0)
+            elif step == "D":
+                newState.move(1, 0)
+            elif step == "L":
+                newState.move(0, -1)
+            elif step == "R":
+                newState.move(0, 1)
+
+            newState.pathSolution += step
+
+            if newState.isComplete():
+                end = time.time()
+                print("Time to find solution:", round(end - start, 2), "seconds")
+                print("Number of visited nodes:", node_generated)
+                print("Solution:", newState.pathSolution, "Number steps:", len(newState.pathSolution))
+                return newState.pathSolution
+
+            if tuple(map(tuple, newState.getMatrix())) not in visited and not isDeadlock(newState):
+                queue.append(newState)
+                visited.add(tuple(map(tuple, newState.getMatrix())))
+
+    print("No Solution!")
+    return "NoSol"
+
+
+
+
+mapp = load_map("level2")
 solve = Solve(mapp)
 solve.printState()
-print(isDeadlock(solve))
-print(validMove(solve))
+result = bfs(solve)

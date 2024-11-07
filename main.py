@@ -144,7 +144,10 @@ root.grid_columnconfigure(2, weight=1)
 root.grid_rowconfigure(1, weight=1)
 root.grid_rowconfigure(2, weight=1)
 
+img_tk_level = None
+
 def load_img_map():
+    global img_tk_level  # Khai báo img_tk_level là biến toàn cục
     select_level = combobox.get().lower().replace(" ", "")
     img_path = f"img_map\\{select_level}.png"
     try:
@@ -168,6 +171,8 @@ combobox.grid(row=0, column=1, padx=10, pady=10)
 
 button_start = tk.Button(root, text="Start", command=start_game, font=("Arial", 10), width=12)
 button_start.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+
+img_tk = None
 
 img_path_default = f"img_map\\chooselevel.png"
 try:

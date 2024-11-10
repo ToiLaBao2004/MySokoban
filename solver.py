@@ -1,6 +1,7 @@
 import copy
 import time
 from collections import deque
+import heapq
 
 class Solve:
     def __init__(self, matrix):
@@ -245,3 +246,77 @@ def dfs(game):
     print(node_generated)
     print("No Solution!")
     return "NoSol"
+    
+
+def A(game):
+    start = time.time()
+    node_generated = 0
+    initial_state = copy.deepcopy(game)
+    node_generated += 1
+
+    if isDeadlock(initial_state):
+        print("No Solution!")
+        return "NoSol"\
+    
+    priority_queue = []
+    heapq.heappush(priority_queue, (0, initial_state))
+    visited = set()
+    visited.add(tuple(map(tuple, initial_state.getMatrix())))
+
+    print("Processing A* Search......")
+
+    while priority_queue:
+        _, currState = heapq.heappop(priority_queue) # giá trị đầu tiên không được sử dụng
+
+        if currState.isComplete():
+            end = time.time()
+            print("Time to find solution:", round(end - start, 2), "seconds")
+            print("Number of visited nodes:", node_generated)
+            print("Solution:", currState.pathSolution, "Number steps:", len(currState.pathSolution))
+            return currState.pathSolution
+
+        move = validMove(currState)
+        for step in move:
+            newState = copy.deepcopy(currState)
+            node_generated += 1
+
+            # Di chuyển dựa trên bước
+            if step == 'U':
+                newState.move(-1, 0)
+            elif step == 'D':
+                newState.move(1, 0)
+            elif step == 'L':
+                newState.move(0, -1)
+            elif step == 'R':
+                newState.move(0, 1)
+
+            newState.pathSolution += step
+
+            # Kiểm tra trạng thái mới có bị deadlock không và chưa từng được thăm
+            if (tuple(map(tuple, newState.getMatrix())) not in visited) and (not isDeadlock(newState)):
+                visited.add(tuple(map(tuple, newState.getMatrix())))
+                
+                # Tính toán hàm f(n) = g(n) + h(n)
+                g = len(newState.pathSolution)  # Số bước từ trạng thái ban đầu đến trạng thái hiện tại
+                h = heuristic(newState)  # Heuristic ước lượng chi phí đến đích
+                f = g + h
+                heapq.heappush(priority_queue, (f, newState))
+
+    print(node_generated)
+    print("No Solution!")
+    return "NoSol"
+
+def heuristic(state):
+    box_positions = state.boxPosition()
+    dock_positions = state.dockListPosition
+    distance = 0
+    
+    # Tính tổng khoảng cách Manhattan từ mỗi hộp đến vị trí dock gần nhất
+    for box_y, box_x in box_positions:
+        min_dist = float('inf')
+        for dock_y, dock_x in dock_positions:
+            min_dist = min(min_dist, abs(box_y - dock_y) + abs(box_x - dock_x))
+        distance += min_dist
+    return distance
+    
+    

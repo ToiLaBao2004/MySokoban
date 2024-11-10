@@ -1,5 +1,6 @@
 import copy
 import time
+import queue
 from collections import deque
 
 class Solve:
@@ -7,6 +8,11 @@ class Solve:
         self.matrix = matrix
         self.pathSolution = ""
         self.dockListPosition = self.dockPosition()
+        self.heuristic=0
+        
+    #Dùng để so sánh xem ai có heuristic nhỏ hơn trong priority queue khi thêm vào    
+    def __lt__(self,other):
+        return self.heuristic<other.heuristic
 
     def getMatrix(self):
         return self.matrix
@@ -42,7 +48,7 @@ class Solve:
                 if char == '.':
                     dockListPosition.append((y, x))
         return dockListPosition
-
+    
     def workerCanMove(self, y, x):
         return self.getElementNextStep(y, x) in [' ', '.']
 
@@ -109,6 +115,27 @@ def validMove(state):
             valid_moves.append(step)
 
     return valid_moves
+
+def box_toDock(state):
+        sum = 0
+        box_list = state.boxPosition()
+        dock_list = state.dockPosition()
+        for box in box_list:
+            min_distance = float('inf')
+            for dock in dock_list:
+                distance=(abs(dock[0] - box[0]) + abs(dock[1] - box[1]))
+                if(distance<min_distance):
+                    min_distance=distance
+            sum += min_distance
+        return sum
+
+def worker_toBox(state):
+    sum=0
+    box_list=state.boxPosition()
+    woker_pos=state.workerPosition()
+    for box in box_list:
+        sum+= abs(box[0]-woker_pos[0])+abs(box[1]-woker_pos[1])
+    return sum
 
 def isDeadlock(state):
     boxListPosition = state.boxPosition()
@@ -242,6 +269,53 @@ def dfs(game):
                 stack.append(newState)
                 visited.add(tuple(map(tuple, newState.getMatrix())))
 
+    print(node_generated)
+    print("No Solution!")
+    return "NoSol"
+
+
+def astar(game):
+    start = time.time()
+    node_generated = 0
+    state_state = copy.deepcopy(game)
+    node_generated += 1
+    state_state.heuristic=worker_toBox(state_state)+box_toDock(state_state)
+    
+    if isDeadlock(state_state):
+        print("No Solution!")
+        return "NoSol"
+    
+    open_list=queue.PriorityQueue()   
+    open_list.put(state_state)
+    close_list=set()
+    print("Processing A*......")
+    
+    while not open_list.empty():
+        cur_state=open_list.get()
+        move=validMove(cur_state)
+        close_list.add(tuple(map(tuple, cur_state.getMatrix())))
+        
+        for step in move:
+            new_state = copy.deepcopy(cur_state)
+            node_generated += 1
+            if step == 'U':
+                new_state.move(-1, 0)
+            elif step == 'D':
+                new_state.move(1, 0)
+            elif step == 'L':
+                new_state.move(0, -1)
+            elif step == 'R':
+                new_state.move(0, 1)
+            new_state.pathSolution+=step
+            new_state.heuristic = worker_toBox(new_state) + box_toDock(new_state)
+            if new_state.isComplete():
+                end=time.time()
+                print("Time to find solution:", round(end - start, 2), "seconds")
+                print("Number of visited nodes:", node_generated)
+                print("Solution:", new_state.pathSolution, "Number steps:", len(new_state.pathSolution))
+                return new_state.pathSolution
+            if (tuple(map(tuple, new_state.getMatrix())) not in close_list) and not isDeadlock(new_state):
+                open_list.put(new_state)
     print(node_generated)
     print("No Solution!")
     return "NoSol"

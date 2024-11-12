@@ -17,3 +17,4 @@ Processing DFS......<br>
 Time to find solution: 0.01 seconds<br>
 Number of visited nodes: 264<br>
 Solution: RRRURUULLLDLLUURLDDRRRDRRUULUULLDDRRRDDLLDLLUURLLUURRURRDDRDDLLULUR Number steps: 67<br>
+## A* ALGORITHM

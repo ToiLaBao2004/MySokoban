@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-from solver import bfs, dfs, Solve
+from solver import bfs, dfs, astar, Solve
 
 def load_map(level):
     list_map = []
@@ -96,6 +96,11 @@ def start_game():
                     path = dfs(solve)
                     lenPath = len(path)
                     machinePlay = True
+                elif event.key ==pygame.K_a:
+                    solve.matrix=gameSokoban.matrix
+                    path=astar(solve)
+                    lenPath=len(path)
+                    machinePlay= True
             if event.type == pygame.QUIT:
                 running = False
 

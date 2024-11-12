@@ -18,3 +18,8 @@ Time to find solution: 0.01 seconds<br>
 Number of visited nodes: 264<br>
 Solution: RRRURUULLLDLLUURLDDRRRDRRUULUULLDDRRRDDLLDLLUURLLUURRURRDDRDDLLULUR Number steps: 67<br>
 ## A* ALGORITHM
+![astar](https://github.com/user-attachments/assets/4a533cd7-4522-429c-99eb-d18617b20272)
+Processing A*......<br>
+Time to find solution: 0.02 seconds<br>
+Number of visited nodes: 301<br>
+Solution: UULUURLDDRRRDRRUULUULLDDRDDDLLUURLDDRRUULUR Number steps: 43<br>

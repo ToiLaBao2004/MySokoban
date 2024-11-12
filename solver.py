@@ -8,11 +8,10 @@ class Solve:
         self.matrix = matrix
         self.pathSolution = ""
         self.dockListPosition = self.dockPosition()
-        self.heuristic=0
-        
-    #Dùng để so sánh xem ai có heuristic nhỏ hơn trong priority queue khi thêm vào    
+        self.heuristic = 0
+
     def __lt__(self,other):
-        return self.heuristic<other.heuristic
+        return self.heuristic < other.heuristic
 
     def getMatrix(self):
         return self.matrix
@@ -117,24 +116,24 @@ def validMove(state):
     return valid_moves
 
 def box_toDock(state):
-        sum = 0
-        box_list = state.boxPosition()
-        dock_list = state.dockPosition()
-        for box in box_list:
-            min_distance = float('inf')
-            for dock in dock_list:
-                distance=(abs(dock[0] - box[0]) + abs(dock[1] - box[1]))
-                if(distance<min_distance):
-                    min_distance=distance
-            sum += min_distance
-        return sum
+    sum = 0
+    box_list = state.boxPosition()
+    dock_list = state.dockPosition()
+    for box in box_list:
+        min_distance = float('inf')
+        for dock in dock_list:
+            distance = (abs(dock[0] - box[0]) + abs(dock[1] - box[1]))
+            if(distance < min_distance):
+                min_distance = distance
+        sum += min_distance
+    return sum
 
 def worker_toBox(state):
-    sum=0
-    box_list=state.boxPosition()
-    woker_pos=state.workerPosition()
+    sum = 0
+    box_list = state.boxPosition()
+    woker_pos = state.workerPosition()
     for box in box_list:
-        sum+= abs(box[0]-woker_pos[0])+abs(box[1]-woker_pos[1])
+        sum += abs(box[0] - woker_pos[0]) + abs(box[1] - woker_pos[1])
     return sum
 
 def isDeadlock(state):
@@ -279,19 +278,19 @@ def astar(game):
     node_generated = 0
     state_state = copy.deepcopy(game)
     node_generated += 1
-    state_state.heuristic=worker_toBox(state_state)+box_toDock(state_state)
+    state_state.heuristic = worker_toBox(state_state) + box_toDock(state_state)
     
     if isDeadlock(state_state):
         print("No Solution!")
         return "NoSol"
     
-    open_list=queue.PriorityQueue()   
+    open_list = queue.PriorityQueue()
     open_list.put(state_state)
-    close_list=set()
+    close_list = set()
     print("Processing A*......")
     
     while not open_list.empty():
-        cur_state=open_list.get()
+        cur_state = open_list.get()
         move=validMove(cur_state)
         close_list.add(tuple(map(tuple, cur_state.getMatrix())))
         
@@ -306,16 +305,19 @@ def astar(game):
                 new_state.move(0, -1)
             elif step == 'R':
                 new_state.move(0, 1)
-            new_state.pathSolution+=step
+            new_state.pathSolution += step
             new_state.heuristic = worker_toBox(new_state) + box_toDock(new_state)
+
             if new_state.isComplete():
-                end=time.time()
+                end = time.time()
                 print("Time to find solution:", round(end - start, 2), "seconds")
                 print("Number of visited nodes:", node_generated)
                 print("Solution:", new_state.pathSolution, "Number steps:", len(new_state.pathSolution))
                 return new_state.pathSolution
+
             if (tuple(map(tuple, new_state.getMatrix())) not in close_list) and not isDeadlock(new_state):
                 open_list.put(new_state)
+
     print(node_generated)
     print("No Solution!")
     return "NoSol"

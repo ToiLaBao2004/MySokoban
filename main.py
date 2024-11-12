@@ -97,10 +97,10 @@ def start_game():
                     lenPath = len(path)
                     machinePlay = True
                 elif event.key ==pygame.K_a:
-                    solve.matrix=gameSokoban.matrix
-                    path=astar(solve)
-                    lenPath=len(path)
-                    machinePlay= True
+                    solve.matrix = gameSokoban.matrix
+                    path = astar(solve)
+                    lenPath = len(path)
+                    machinePlay = True
             if event.type == pygame.QUIT:
                 running = False
 

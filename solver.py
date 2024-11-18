@@ -291,12 +291,13 @@ def astar(game):
     
     while not open_list.empty():
         cur_state = open_list.get()
-        move=validMove(cur_state)
+        move = validMove(cur_state)
         close_list.add(tuple(map(tuple, cur_state.getMatrix())))
         
         for step in move:
             new_state = copy.deepcopy(cur_state)
             node_generated += 1
+
             if step == 'U':
                 new_state.move(-1, 0)
             elif step == 'D':
@@ -305,6 +306,7 @@ def astar(game):
                 new_state.move(0, -1)
             elif step == 'R':
                 new_state.move(0, 1)
+
             new_state.pathSolution += step
             new_state.heuristic = worker_toBox(new_state) + box_toDock(new_state)
 

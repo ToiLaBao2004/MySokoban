@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-from solver import bfs, dfs, astar, Solve, backtracking
+from solver import bfs, dfs, astar, Solve
 
 
 def load_map(level):
@@ -179,7 +179,6 @@ button_start = tk.Button(root, text="Start", command=start_game, font=("Arial", 
 button_start.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
 img_tk = None
-
 img_path_default = f"img_map\\chooselevel.png"
 try:
     img = Image.open(img_path_default)
@@ -192,5 +191,9 @@ image_label = tk.Label(root, image=img_tk)
 image_label.grid(row=1, rowspan=2, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
 combobox.bind("<<ComboboxSelected>>", lambda event: load_img_map())
+
+team_members = "N.H.Bảo, P.P.Hảo, N.V.C.Tường"
+team_label = tk.Label(root, text=team_members, font=("Arial", 10), fg="gray")
+team_label.place(relx=1.0, rely=1.0, anchor="se", x=-5, y=-5)
 
 root.mainloop()

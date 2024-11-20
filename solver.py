@@ -323,3 +323,66 @@ def astar(game):
     print(node_generated)
     print("No Solution!")
     return "NoSol"
+def backtracking(game):
+    start = time.time()
+    node_generated = 0
+    start_state = copy.deepcopy(game)
+    visited = set()
+
+    if isDeadlock(start_state):
+        print("No Solution!")
+        return "NoSol"
+
+    print("Processing backtracking*......")
+    
+    def solve(state):
+        nonlocal node_generated
+
+        # Nếu hoàn thành, trả về đường đi
+        if state.isComplete():
+            return state.pathSolution
+
+        # Lưu trạng thái vào visited
+        visited.add(tuple(map(tuple, state.getMatrix())))
+
+        # Thử từng bước đi khả dụng
+        for step in validMove(state):
+            newState = copy.deepcopy(state)
+            node_generated += 1
+
+            # Thực hiện bước đi
+            if step == 'U':
+                newState.move(-1, 0)
+            elif step == 'D':
+                newState.move(1, 0)
+            elif step == 'L':
+                newState.move(0, -1)
+            elif step == 'R':
+                newState.move(0, 1)
+
+            newState.pathSolution += step
+
+            # Kiểm tra deadlock hoặc trạng thái đã ghé qua
+            if tuple(map(tuple, newState.getMatrix())) in visited or isDeadlock(newState):
+                continue
+
+            # Đệ quy tìm giải pháp từ trạng thái mới
+            solutionPath = solve(newState)
+            if solutionPath:  # Nếu tìm được giải pháp, trả về
+                return solutionPath
+
+        # Không tìm thấy đường đi, quay lui
+        return None
+
+    # Bắt đầu giải bài toán
+    solution = solve(start_state)
+    end = time.time()
+
+    if solution:
+        print("Time to find solution:", round(end - start, 2), "seconds")
+        print("Number of visited nodes:", node_generated)
+        print("Solution:", solution, "Number steps:", len(solution))
+        return solution
+    else:
+        print("No Solution!")
+        return "NoSol"

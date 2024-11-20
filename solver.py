@@ -177,16 +177,16 @@ def isDeadlock(state):
 def bfs(game):
     start = time.time()
     node_generated = 0
-    state_state = copy.deepcopy(game)
+    start_state = copy.deepcopy(game)
     node_generated += 1
 
-    if isDeadlock(state_state):
+    if isDeadlock(start_state):
         print("No Solution!")
         return "NoSol"
 
-    queue = deque([state_state])
+    queue = deque([start_state])
     visited = set()
-    visited.add(tuple(map(tuple, state_state.getMatrix())))
+    visited.add(tuple(map(tuple, start_state.getMatrix())))
 
     print("Processing BFS......")
 
@@ -226,16 +226,16 @@ def bfs(game):
 def dfs(game):
     start = time.time()
     node_generated = 0
-    state_state = copy.deepcopy(game)
+    start_state = copy.deepcopy(game)
     node_generated += 1
 
-    if isDeadlock(state_state):
+    if isDeadlock(start_state):
         print("No Solution!")
         return "NoSol"
 
-    stack = [state_state]
+    stack = [start_state]
     visited = set()
-    visited.add(tuple(map(tuple, state_state.getMatrix())))
+    visited.add(tuple(map(tuple, start_state.getMatrix())))
 
     print("Processing DFS......")
 
@@ -276,16 +276,16 @@ def dfs(game):
 def astar(game):
     start = time.time()
     node_generated = 0
-    state_state = copy.deepcopy(game)
+    start_state = copy.deepcopy(game)
     node_generated += 1
-    state_state.heuristic = worker_toBox(state_state) + box_toDock(state_state)
+    start_state.heuristic = worker_toBox(start_state) + box_toDock(start_state)
     
-    if isDeadlock(state_state):
+    if isDeadlock(start_state):
         print("No Solution!")
         return "NoSol"
     
     open_list = queue.PriorityQueue()
-    open_list.put(state_state)
+    open_list.put(start_state)
     close_list = set()
     print("Processing A*......")
     

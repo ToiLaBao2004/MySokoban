@@ -6,7 +6,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-from solver import bfs, dfs, astar, backtracking, Solve
+from solver import bfs, dfs, astar, backtracking, simulated_annealing, Solve
 
 
 def load_map(level):
@@ -105,6 +105,11 @@ def start_game():
                 elif event.key == pygame.K_k:
                     solve.matrix = gameSokoban.matrix
                     path = backtracking(solve)
+                    lenPath = len(path)
+                    machinePlay = True
+                elif event.key == pygame.K_s:
+                    solve.matrix = gameSokoban.matrix
+                    path = simulated_annealing(solve)
                     lenPath = len(path)
                     machinePlay = True
             if event.type == pygame.QUIT:

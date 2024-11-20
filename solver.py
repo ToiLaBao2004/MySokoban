@@ -123,7 +123,7 @@ def box_toDock(state):
         min_distance = float('inf')
         for dock in dock_list:
             distance = (abs(dock[0] - box[0]) + abs(dock[1] - box[1]))
-            if(distance < min_distance):
+            if distance < min_distance:
                 min_distance = distance
         sum += min_distance
     return sum
@@ -323,6 +323,8 @@ def astar(game):
     print(node_generated)
     print("No Solution!")
     return "NoSol"
+
+
 def backtracking(game):
     start = time.time()
     node_generated = 0

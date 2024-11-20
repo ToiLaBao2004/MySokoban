@@ -2,6 +2,9 @@ import copy
 import time
 import queue
 from collections import deque
+import math
+import random
+
 
 class Solve:
     def __init__(self, matrix):
@@ -388,3 +391,66 @@ def backtracking(game):
     else:
         print("No Solution!")
         return "NoSol"
+      
+    
+def simulated_annealing(game, initial_temperature=1000, cooling_rate=0.95, max_iterations=1000):
+    start = time.time()
+    node_generated = 0
+
+    # Sao chép trạng thái ban đầu
+    current_state = copy.deepcopy(game)
+    node_generated += 1
+
+    # Đặt nhiệt độ ban đầu
+    temperature = initial_temperature
+
+    # Đường đi tốt nhất và heuristic ban đầu
+    best_path = ""
+    best_heuristic = worker_toBox(current_state) + box_toDock(current_state)
+
+    print("Processing Simulated Annealing......")
+
+    for _ in range(max_iterations):
+        # Kiểm tra nếu đã hoàn thành
+        if current_state.isComplete():
+            end = time.time()
+            print("Time to find solution:", round(end - start, 2), "seconds")
+            print("Number of visited nodes:", node_generated)
+            print("Solution:", best_path, "Number steps:", len(best_path))
+            return best_path
+
+        # Lấy tất cả các nước đi hợp lệ
+        moves = validMove(current_state)
+        if not moves:
+            break
+
+        # Chọn ngẫu nhiên một bước đi
+        step = random.choice(moves)
+        next_state = copy.deepcopy(current_state)
+        node_generated += 1
+
+        # Thực hiện bước đi
+        if step == 'U':
+            next_state.move(-1, 0)
+        elif step == 'D':
+            next_state.move(1, 0)
+        elif step == 'L':
+            next_state.move(0, -1)
+        elif step == 'R':
+            next_state.move(0, 1)
+
+        # Tính heuristic của trạng thái tiếp theo
+        next_heuristic = worker_toBox(next_state) + box_toDock(next_state)
+
+        # Tính toán xác suất chọn trạng thái kém hơn
+        delta = next_heuristic - best_heuristic
+        if delta < 0 or random.uniform(0, 1) < math.exp(-delta / temperature):
+            current_state = next_state
+            best_path += step
+            best_heuristic = next_heuristic
+
+        # Giảm nhiệt độ
+        temperature *= cooling_rate
+
+    print("No Solution Found!")
+    return "NoSol"

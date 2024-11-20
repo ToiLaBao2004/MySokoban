@@ -5,6 +5,7 @@ from collections import deque
 import math
 import random
 
+
 class Solve:
     def __init__(self, matrix):
         self.matrix = matrix
@@ -390,6 +391,7 @@ def backtracking(game):
     else:
         print("No Solution!")
         return "NoSol"
+      
     
 def simulated_annealing(game, initial_temperature=1000, cooling_rate=0.95, max_iterations=1000):
     start = time.time()

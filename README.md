@@ -9,4 +9,4 @@ Press the K button to solve with BACKTRACKING.<br>
 Press the S button to solve with SIMULATED ANNEALING.<br>
 Press the Q button to train with DEEP Q-NETWORK.<br>
 The console will display the solution, solving time, and the number of states explored.<br>
-![Sokoban](https://github.com/user-attachments/assets/7ae3db41-18c4-43b3-86eb-0503456bae71)
+![Sokoban](https://github.com/user-attachments/assets/c2a94d8d-94b4-4d7f-b9ec-754474aecea0)

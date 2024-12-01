@@ -204,6 +204,6 @@ combobox.bind("<<ComboboxSelected>>", lambda event: load_img_map())
 
 team_members = "N.H.Bảo, P.P.Hảo, N.V.C.Tường"
 team_label = tk.Label(root, text=team_members, font=("Arial", 10), fg="gray")
-team_label.place(relx=1.0, rely=1.0, anchor="se", x=-5, y=-5)
+team_label.place(relx=1.0, rely=1.0, anchor="se", x=-5, y=5)
 
 root.mainloop()

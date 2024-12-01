@@ -133,9 +133,9 @@ def box_toDock(state):
 def worker_toBox(state):
     sum = 0
     box_list = state.boxPosition()
-    woker_pos = state.workerPosition()
+    worker_pos = state.workerPosition()
     for box in box_list:
-        sum += abs(box[0] - woker_pos[0]) + abs(box[1] - woker_pos[1])
+        sum += abs(box[0] - worker_pos[0]) + abs(box[1] - worker_pos[1])
     return sum
 
 def isDeadlock(state):
@@ -281,21 +281,22 @@ def astar(game):
     start_state = copy.deepcopy(game)
     node_generated += 1
     start_state.heuristic = worker_toBox(start_state) + box_toDock(start_state)
-    
+
     if isDeadlock(start_state):
         print("No Solution!")
         return "NoSol"
-    
+
     open_list = queue.PriorityQueue()
     open_list.put(start_state)
     close_list = set()
+
     print("Processing A*......")
-    
+
     while not open_list.empty():
         cur_state = open_list.get()
         move = validMove(cur_state)
         close_list.add(tuple(map(tuple, cur_state.getMatrix())))
-        
+
         for step in move:
             new_state = copy.deepcopy(cur_state)
             node_generated += 1
@@ -337,8 +338,8 @@ def backtracking(game):
         print("No Solution!")
         return "NoSol"
 
-    print("Processing backtracking*......")
-    
+    print("Processing BACKTRACKING......")
+
     def solve(state):
         nonlocal node_generated
 
@@ -407,7 +408,7 @@ def simulated_annealing(game, initial_temperature=1000, cooling_rate=0.95, max_i
     best_path = ""
     best_heuristic = worker_toBox(current_state) + box_toDock(current_state)
 
-    print("Processing Simulated Annealing......")
+    print("Processing SIMULATED ANNEALING......")
 
     for _ in range(max_iterations):
         # Kiểm tra nếu đã hoàn thành

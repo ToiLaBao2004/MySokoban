@@ -7,6 +7,5 @@ Press the D button to solve with DFS.<br>
 Press the A button to solve with A*.<br>
 Press the K button to solve with BACKTRACKING.<br>
 Press the S button to solve with SIMULATED ANNEALING.<br>
-Press the Q button to train with DEEP Q-NETWORK.<br>
 The console will display the solution, solving time, and the number of states explored.<br>
 ![Sokoban](https://github.com/user-attachments/assets/c2a94d8d-94b4-4d7f-b9ec-754474aecea0)

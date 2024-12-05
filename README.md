@@ -9,6 +9,7 @@ MySokoban is an AI-based project that solves and simulates the Sokoban puzzle us
 6. [Getting Started](#getting-started)
 7. [Future Improvements](#future-improvements)
 8. [Authors](#authors)
+9. [How To Play](#how-to-play)
 ## Overview
 Sokoban is a classic puzzle game developed in the 1980s in Japan. This project combines the logical challenges of Sokoban with AI algorithms to:
 - Solve Sokoban puzzles automatically.
